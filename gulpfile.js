@@ -4,6 +4,7 @@ const autoprefixer = require('gulp-autoprefixer');
 const cssnano = require('gulp-cssnano');
 const rename = require("gulp-rename");
 const image = require('gulp-image');
+const fonts = require('gulp-fontmin');
 const browserSync = require('browser-sync').create();
 const del = require('del');
 
@@ -15,6 +16,10 @@ const paths = {
   html: {
     src: 'src/**/*.html',
     dest: 'dist/'
+  },
+  fonts: {
+    src: 'src/fonts/**/*.*',
+    dest: 'dist/fonts'
   },
   images: {
     src: 'src/images/*.*',
@@ -47,6 +52,13 @@ function buildCSS() {
     .pipe(browserSync.stream())
 }
 
+function buildFonts(){
+  return gulp.src(paths.fonts.src)
+  .pipe(fonts())
+  .pipe(gulp.dest(paths.fonts.dest))
+  .pipe(browserSync.stream())
+}
+
 function buildHTML() {
   return gulp.src(paths.html.src)
     .pipe(gulp.dest(paths.html.dest))
@@ -71,7 +83,7 @@ function clear() {
   return del(['dist']);
 }
 
-const build = gulp.series(clear, gulp.parallel(buildCSS, buildHTML, buildImages));
+const build = gulp.series(clear, gulp.parallel(buildCSS, buildHTML, buildImages, buildFonts));
 
 gulp.task('build', build);
 
